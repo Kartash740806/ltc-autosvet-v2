@@ -2,13 +2,15 @@
 <html lang="ru">
 <head>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
+ <script>
+  // Инициализация Telegram WebApp
   const tg = window.Telegram.WebApp;
   tg.ready();
   tg.expand();
 
-  const user = tg.initDataUnsafe.user;
-  if (user) {
+  // Регистрация (фоновый процесс)
+  if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+    const user = tg.initDataUnsafe.user;
     fetch('/api/users/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -17,7 +19,7 @@
         username: user.username || '',
         first_name: user.first_name || ''
       })
-    }).catch(err => console.error('Ошибка:', err));
+    }).catch(err => console.log('Регистрация не критична:', err));
   }
 </script>
 <meta charset="UTF-8">
