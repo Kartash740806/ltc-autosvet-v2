@@ -268,8 +268,27 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`LTC Server v2 running on http://localhost:${PORT}`);
+const fs = require('fs');
+const path = require('path');
+
+async function initDatabase() {
+    try {
+        const schemaPath = path.join(__dirname, 'schema.sql');
+        if (fs.existsSync(schemaPath)) {
+            const sql = fs.readFileSync(schemaPath, 'utf8');
+            await pool.query(sql);
+            console.log('✅ Таблицы базы данных успешно проверены/созданы!');
+        }
+    } catch (err) {
+        console.error('❌ Ошибка автоматической инициализации базы:', err);
+    }
+}
+
+// Сначала создаем таблицы, потом запускаем сервер
+initDatabase().then(() => {
+    app.listen(PORT, () => {
+        console.log(`LTC Server v2 running on http://localhost:${PORT}`);
+    });
 });
 
 module.exports = app;
