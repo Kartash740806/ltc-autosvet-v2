@@ -286,6 +286,19 @@ async function initDatabase() {
 
 // Запускаем
 initDatabase().then(() => {
+  app.post('/api/users/register', async (req, res) => {
+  const { tg_id, username, first_name } = req.body;
+  try {
+    await pool.query(
+      'INSERT INTO users (tg_id, username, first_name) VALUES ($1, $2, $3) ON CONFLICT (tg_id) DO UPDATE SET username = $2, first_name = $3',
+      [tg_id, username, first_name]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Ошибка регистрации:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
     app.listen(PORT, () => {
         console.log(`LTC Server v2 running on port ${PORT}`);
     });
