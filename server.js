@@ -268,14 +268,10 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-const fs = require('fs');
-const path = require('path');
-
+// Безопасный запуск сервера и проверка таблиц
 // Безопасный запуск сервера и проверка таблиц
 async function initDatabase() {
     try {
-        const fs = require('fs');
-        const path = require('path');
         const schemaPath = path.join(__dirname, 'schema.sql');
         
         if (fs.existsSync(schemaPath)) {
