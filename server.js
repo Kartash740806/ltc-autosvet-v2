@@ -271,9 +271,13 @@ app.get('*', (req, res) => {
 const fs = require('fs');
 const path = require('path');
 
+// Безопасный запуск сервера и проверка таблиц
 async function initDatabase() {
     try {
+        const fs = require('fs');
+        const path = require('path');
         const schemaPath = path.join(__dirname, 'schema.sql');
+        
         if (fs.existsSync(schemaPath)) {
             const sql = fs.readFileSync(schemaPath, 'utf8');
             await pool.query(sql);
@@ -284,11 +288,14 @@ async function initDatabase() {
     }
 }
 
-// Сначала создаем таблицы, потом запускаем сервер
+// Запускаем
 initDatabase().then(() => {
     app.listen(PORT, () => {
-        console.log(`LTC Server v2 running on http://localhost:${PORT}`);
+        console.log(`LTC Server v2 running on port ${PORT}`);
+    });
+}).catch(err => {
+    console.error('Критическая ошибка при старте:', err);
+    app.listen(PORT, () => {
+        console.log(`LTC Server v2 started in fallback mode on port ${PORT}`);
     });
 });
-
-module.exports = app;
