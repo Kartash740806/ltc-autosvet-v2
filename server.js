@@ -269,9 +269,10 @@ app.get('*', (req, res) => {
 });
 
 // Безопасный запуск сервера и проверка таблиц
-// Безопасный запуск сервера и проверка таблиц
 async function initDatabase() {
     try {
+        // Возвращаем fs на место, здесь она никому не помешает
+        const fs = require('fs'); 
         const schemaPath = path.join(__dirname, 'schema.sql');
         
         if (fs.existsSync(schemaPath)) {
